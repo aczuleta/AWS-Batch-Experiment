@@ -1,0 +1,26 @@
+{
+  "name": "imageworker",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "restart": "nodemon ./bin/www "
+  },
+  "dependencies": {
+    "aws-sdk": "^2.294.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "dynamic-watermark": "^1.0.0",
+    "express": "~4.16.0",
+    "gm": "^1.23.1",
+    "http-errors": "~1.6.2",
+    "http-status": "^1.2.0",
+    "image-downloader": "^3.4.1",
+    "image-watermark": "0.0.7",
+    "imaginary": "^0.1.16",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.0",
+    "multiparty": "^4.2.1",
+    "s3-image-uploader": "^1.0.7"
+  }
+}
