@@ -21,8 +21,6 @@ var s3 = new AWS.S3();
 
 var uploader = new Uploader({
   aws : {
-    key : "AKIAJXQBP6XZTVZCRPAQ",
-    secret : "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"
   }
 });
 
