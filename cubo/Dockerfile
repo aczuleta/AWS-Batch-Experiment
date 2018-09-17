@@ -92,12 +92,23 @@ RUN cd ~ && \
     
 COPY .datacube.conf  /root/
 
-#RUN datacube -v system init
-
-
+#Creamos el usuario con los permisos necesarios para usar el cubo
+RUN sudo adduser cubo && \
+    sudo usermod -aG sudo cubo
+        
+RUN datacube -v system init && \
+    source $HOME/.bashrc && \
+    sudo groupadd ingesters && \
+    sudo mkdir /dc_storage && \
+    sudo mkdir /source_storage && \
+    sudo chown $USUARIO_CUBO:ingesters /dc_storage && \
+    sudo chmod -R g+rwxs /dc_storage && \
+    sudo chown $USUARIO_CUBO:ingesters /source_storage && \
+    sudo chmod -R g+rwxs /source_storage && \
+    sudo mkdir /web_storage && \
+    sudo chown $USUARIO_CUBO /web_storage
 
 RUN pass=$(perl -e 'print crypt($ARGV[0], "password")' "uniandes") && \
-    sudo groupadd ingesters && \
     sudo useradd  --no-create-home -G ingesters -p $pass ingestor --shell="/usr/sbin/nologin" --home /source_storage  -K UMASK=002  
     
 
