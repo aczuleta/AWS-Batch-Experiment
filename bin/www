@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('imageworker:server');
 var http = require('http');
+var rp = require('request-promise');
 
 /**
  * Get port from environment and store in Express.
@@ -88,4 +89,24 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+
+  /** 
+  console.log("vamos a llamar la función al inicializar");
+  let options = {
+      method: 'POST',
+      uri: 'http://localhost:4040/descargar',
+      body: {
+          urlImagen: process.env.BATCH_PATH
+      },
+      json: true // Automatically stringifies the body to JSON
+  };
+ 
+  rp(options)
+    .then(function (parsedBody) {
+        console.log("Éxito");
+    })
+    .catch(function (err) {
+        console.log(err);
+    });
+    */
 }

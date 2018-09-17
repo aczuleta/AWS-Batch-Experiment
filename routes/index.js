@@ -3,6 +3,9 @@ const status = require('http-status');
 var express = require('express');
 var router = express.Router();
 
+var fs = require('fs');
+var gm = require('gm').subClass({imageMagick: true});
+
 //Configuración para descargar la Imagen
 const download = require('image-downloader');
 const destino = './public/images';
@@ -18,8 +21,8 @@ var s3 = new AWS.S3();
 
 var uploader = new Uploader({
   aws : {
-    key : "XXXXXX",
-    secret : "XXXXXX"
+    key : "AKIAJXQBP6XZTVZCRPAQ",
+    secret : "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"
   }
 });
 
@@ -28,7 +31,18 @@ var uploader = new Uploader({
 router.get('/', function(req, res, next) {
     
    console.log("el servidor está funcionando en orden");
+   console.log("estoy en la ubicación correcta");
    
+   gm('./public/images/foto_23.jpg')
+    .resize(600, 600)
+    .colors(128)
+    .bitdepth(5)
+    .compress("Group4")
+    .noProfile()
+    .write('./public/images/resize.png', function (err) {
+      if (!err) console.log('done');
+    });
+
     res.status(status.OK).json({
       code: 100,
       response: "hellow world"
@@ -57,10 +71,10 @@ router.post('/descargar', async function(req, res, next) {
         logo: "uniandes.jpeg", // This is optional if you have provided text Watermark
         destination: "output.png",
         position: {
-            logoX : 200,
-            logoY : 200,
-            logoHeight: 600,
-            logoWidth: 600
+            logoX : 100,
+            logoY : 100,
+            logoHeight: 50,
+            logoWidth: 50
         }
       };
 
@@ -72,7 +86,7 @@ router.post('/descargar', async function(req, res, next) {
             fileId : 'someUniqueIdentifier',
             bucket : 'tesis-aczuleta',
             source : 'output.png',
-            name : 'mynewimage.png'
+            name : imagen +  '-output.png'
           },
           function(data){ // success
             console.log('upload success:', data);
@@ -83,6 +97,11 @@ router.post('/descargar', async function(req, res, next) {
             // execute error code
           });
       });
+
+      res.status(status.OK).json({
+        code: 100,
+        message: "Upload successfull"
+      })
     }
   });
    

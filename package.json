@@ -21,6 +21,8 @@
     "jade": "~1.11.0",
     "morgan": "~1.9.0",
     "multiparty": "^4.2.1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
     "s3-image-uploader": "^1.0.7"
   }
 }

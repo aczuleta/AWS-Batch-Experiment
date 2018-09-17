@@ -1,6 +1,4 @@
-
 FROM node:8.11.4-alpine
-MAINTAINER mpneuried
 
 # build tools for native dependencies
 RUN apk add --update make gcc g++ python git
@@ -41,6 +39,10 @@ RUN apk add --update lzip \
     rm -rf GraphicsMagick-$PKGVER && \
     rm GraphicsMagick-$PKGVER.tar.lz
 
+RUN apk add --update curl && \
+    rm -rf /var/cache/apk/*
+
+
 # Create app directory
 WORKDIR /usr/src/app
 # Install app dependencies
@@ -48,10 +50,13 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
+ADD script.sh /usr/src/script.sh
+
 RUN npm install
+
 # If you are building your code for production
 # RUN npm install --only=production
 # Bundle app source
 COPY . .
 EXPOSE 4040
-CMD [ "npm", "start" ]
+ENTRYPOINT ["/usr/src/script.sh"]
