@@ -1,0 +1,13 @@
+[Unit]
+Description=celery daemon
+After=network.target
+
+[Service]
+Type=simple
+User=cubo
+Group=cubo
+WorkingDirectory=/home/cubo
+ExecStart=/home/cubo/anaconda2/bin/celery -A cdcol_celery worker --loglevel=info
+
+[Install]
+WantedBy=multi-user.target

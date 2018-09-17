@@ -96,5 +96,36 @@ COPY .datacube.conf  /root/
 
 
 
+RUN pass=$(perl -e 'print crypt($ARGV[0], "password")' "uniandes") && \
+    sudo groupadd ingesters && \
+    sudo useradd  --no-create-home -G ingesters -p $pass ingestor --shell="/usr/sbin/nologin" --home /source_storage  -K UMASK=002  
+    
+
+RUN export PATH="$HOME/anaconda2/bin:$PATH" && \
+	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc && \
+    yes Y | conda install -c conda-forge celery=3.1.23 && \
+    sudo touch /etc/systemd/system/celery.service && \
+    sudo chmod o+w /etc/systemd/system/celery.service 
+
+COPY celery.service /etc/systemd/system/
+
+RUN sudo chmod o-w /etc/systemd/system/celery.service
+
+#Copiamos en archivo que contiene la configuración para el montaje del NFS
+COPY fstab.txt /root/
+
+#MOUNT NFS SERVER
+RUN cd $HOME && \
+    yes Y | sudo apt install nfs-common && \
+    sudo chmod o+w /etc/fstab && \
+    cat fstab.txt >>/etc/fstab
+
+RUN sudo chmod o-w /etc/fstab && \
+    sudo mkdir /dc_storage /web_storage /source_storage && \
+    sudo chown cubo:root /dc_storage /web_storage /source_storage && \
+    sudo mount /dc_storage && \
+    #sudo mount /source_storage
+    sudo mount /web_storage 
+
 ARG BUILD_INFO
 LABEL BUILD_INFO=$BUILD_INFO
