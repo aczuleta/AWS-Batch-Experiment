@@ -29,7 +29,7 @@ RUN mkdir /root/.ssh/
 #Definimos las variables de entorno a utilizar durante la instalación
 ENV IPDB='192.168.1.31'
 ENV IPNFS='192.168.1.82'
-ENV USUARIO_CUBO="$(whoami)"
+ENV USUARIO_CUBO=cubo
 ENV PASSWORD_CUBO='ASDFADFASSDFA'
 ENV ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
 ENV REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
@@ -97,7 +97,7 @@ RUN sudo adduser cubo && \
     sudo usermod -aG sudo cubo
         
 RUN datacube -v system init && \
-    source $HOME/.bashrc && \
+    /bin/bash -c "source $HOME/.bashrc" && \
     sudo groupadd ingesters && \
     sudo mkdir /dc_storage && \
     sudo mkdir /source_storage && \
@@ -127,16 +127,16 @@ COPY fstab.txt /root/
 
 #MOUNT NFS SERVER
 RUN cd $HOME && \
-    yes Y | sudo apt install nfs-common && \
+    yes Y | sudo  apt install nfs-common && \
+    yes Y | sudo apt-get update && \
     sudo chmod o+w /etc/fstab && \
-    cat fstab.txt >>/etc/fstab
-
-RUN sudo chmod o-w /etc/fstab && \
-    sudo mkdir /dc_storage /web_storage /source_storage && \
-    sudo chown cubo:root /dc_storage /web_storage /source_storage && \
-    sudo mount /dc_storage && \
+    cat fstab.txt >>/etc/fstab && \
+    sudo chmod o-w /etc/fstab && \
+    #sudo mkdir /dc_storage /web_storage /source_storage && \
+    sudo chown cubo:root /dc_storage /web_storage /source_storage 
+    #sudo mount /dc_storage 
     #sudo mount /source_storage
-    sudo mount /web_storage 
+    #sudo mount /web_storage 
 
 ARG BUILD_INFO
 LABEL BUILD_INFO=$BUILD_INFO
