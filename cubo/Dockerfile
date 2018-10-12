@@ -154,7 +154,33 @@ RUN cd /CDCol && \
 RUN cd / && \
     chmod 777 /root && \
     sudo su -l ingestor -s /bin/bash && \
-    cp /root/.datacube.conf /ingestor 
+    cp /root/.datacube.conf /source_storage && \
+    export PATH="/root/anaconda2/bin:$PATH" && \	
+    echo 'export PATH="/root/anaconda2/bin:$PATH"'>>/source_storage/.bashrc && \
+    datacube -v system init
+
+#Para correr la prueba utilizamos una versión simplificada del tasks.py llamada test.py
+COPY test.py /CDCol/cdcol_celery/
+
+#Copiamos nuestro script de inicialización encargado de hacer los montajes de los NFS y el llamado al test.py
+COPY start.sh /
+
+RUN cd / && \
+    chmod 777 start.sh	
+
+#ENV execID="'1208'"
+#ENV algorithm="'ndvi'"
+#ENV version="'1.0'"
+#ENV output_expression="''"
+#ENV product="'LS7_ETM_LEDAPS'"
+#ENV min_lat='9'
+#ENV min_long='-75'
+#ENV time_ranges="[('01-02-2017', '09-05-2017')]"
+#ENV kwargs='normalized=True, minValid=1'
+
+#Definimos nuestro script como el punto de entrada que se ejecuta cuando el contenedor corre
+#ENTRYPOINT ["/start.sh"]
+
 
 ARG BUILD_INFO
 LABEL BUILD_INFO=$BUILD_INFO
